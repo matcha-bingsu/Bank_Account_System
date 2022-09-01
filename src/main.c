@@ -14,15 +14,16 @@ MYSQL_RES*    before_cmd(char *cmd)
 }
 
 // 로그인
-int	login()
+void	login()
 {
 	// 초기화
 	int			user_num;
-	char    	id[20];
-    char    	pswd[20];
-	char        *cmd;
-	char        *cmd2;
-	MYSQL_ROW   tmprow;
+	int			choice;
+	char		id[20];
+	char		pswd[20];
+	char		*cmd;
+	char		*cmd2;
+	MYSQL_ROW	tmprow;
 	
 	//재로그인할 시
 	here:
@@ -43,14 +44,24 @@ int	login()
 	result = before_cmd(cmd2);
 	if (mysql_num_rows(result) == 0)
 	{
-		printf("No matched ID. Make account\n");// 띄어쓰기 나중에 수정
-		return (-1);
+		system("clear");
+		ft_printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
+		ft_printf("\n\n\t\t\tNo matched ID. Choose the option\n");
+		ft_printf("\n\t\t\t[1] Create an account\n");
+		ft_printf("\n\t\t\t[2] Try login again.\n");
+		ft_printf("\n\t\t\tOption : ");
+		scanf("%d", &choice);
+		if (choice == 1)
+			return ;
+		else
+			goto here;
 	}
 	// pasword 가 일치한지 확인
 	tmprow = mysql_fetch_row(result);
 	if (strcmp(tmprow[2], pswd) != 0)
 	{
-		printf("Password is not matched. Please enter right password\n"); // 띄어쓰기 나중에 수정
+		printf("\n\n\t\t\tPassword is not matched. Please enter right password\n");
+		sleep(2);
 		goto here;
 	}
 	
@@ -65,36 +76,64 @@ int	login()
 		else
 			create_bankbook(user_num);
 	}
-	return (0);
+}
+
+void	print_userinfo(int user_num)
+{
+	char	cmd[1024];
+
+	ft_memset(cmd, 0, 1024);
+	ft_strcat(cmd, "select * from User where user_num = ");
+	ft_strcat(cmd, ft_itoa(user_num));
+	result = before_cmd(cmd);
+
+	ft_printf("\n\t");
+	printf("\033[0;32mName\033[0m : %s / ",mysql_fetch_row(result)[3]);
+
+	ft_memset(cmd, 0, 1024);
+	ft_strcat(cmd, "select * from Account where user_num = ");
+	ft_strcat(cmd, ft_itoa(user_num));
+	result = before_cmd(cmd);
+	row = mysql_fetch_row(result);
+
+	printf("\033[0;32mAccount number\033[0m : %s / ", row[0]);
+	printf("\033[0;32mBalance\033[0m : %s\n", row[1]);
 }
 
 void manager_page() // TODO 매니저 페이지 구현 필요
 {
 	system("clear");
-	ft_printf("Welecome to manager page\n");
+	
 }
 
-void user_page(int user_num) // TODO 유저 페이지 구현 필요
+void user_page(int user_num)
 {
 	int	choice;
 
-	system("clear");
-	here :
-	ft_printf("Welecome to user page\n\n");
-	
-	ft_printf("1. deposit\n");
-	ft_printf("2. withdraw\n");
-	ft_printf("3. transaction\n");
-	ft_printf("Select menu number : ");
-	scanf("%d", &choice);
-
-	if (choice == 1)
-		deposit(user_num);
-	else if (choice == 2)
-		withdraw(user_num);
-	else{
-		ft_printf("No match num. please enter number (ex : 1)\n");
-		goto here;
+	while(1)
+	{
+		system("clear");
+		ft_printf("\n\n\t\t\t🟩WELECOME TO USER PAGE🟩\n");
+		
+		print_userinfo(user_num);
+		ft_printf("\n\t\t\t [1] deposit");
+		ft_printf("\n\t\t\t [2] withdraw");
+		ft_printf("\n\t\t\t [3] transaction");
+		ft_printf("\n\t\t\t [4] back to the init menu");
+		ft_printf("\n\n\t\t\tSelect menu number : ");
+		scanf("%d", &choice);
+		if (choice == 1)
+			deposit(user_num);
+		else if (choice == 2)
+			withdraw(user_num);
+		else if (choice == 3)
+			transfer(user_num);
+		else if (choice == 4)
+			return ;
+		else{
+			system("clear");
+			ft_printf("\n\n\t\t\tNo match num. please enter number");
+		}
 	}
 }
 
@@ -102,17 +141,20 @@ void user_page(int user_num) // TODO 유저 페이지 구현 필요
 // 회원가입
 void create_account()
 {
-	char        buff[20];
+	char		buff[20];
 	char		*cmd;
 	char		*cmd2;
-	char        *id;
-	char        *passwd;
-	char        *tmp;
+	char		*id;
+	char		*passwd;
+	char		*tmp;
 	MYSQL_ROW   tmprow;
 
+	
 	here:
+	system("clear");
 	// id 입력 받기
-	printf("ID : ");
+	ft_printf("\n\n\t\t\t Create new account.");
+	printf("\n\n\t\t\tID : ");
 	scanf("%s", buff);
 
 	// 해당 id가 있는지 검색하고 없으면 종료
@@ -122,7 +164,8 @@ void create_account()
 	result = before_cmd(cmd2);
 	if (mysql_num_rows(result) != 0)
 	{
-		printf("ID you entered already exist. Try another\n");
+		printf("\n\n\t\t\tID you entered already exist. Try another\n");
+		sleep(2);
 		goto here;
 	}
 	
@@ -133,7 +176,7 @@ void create_account()
 	cmd = ft_strjoin(cmd2, "', ");
 
 	// password 입력 받기
-	printf("PASSWORD : ");
+	printf("\n\t\t\tPASSWORD : ");
 	scanf("%s", buff);
 	cmd2 = ft_strjoin(cmd, "'");
 	free(cmd);
@@ -144,7 +187,7 @@ void create_account()
 	cmd = cmd2;
 	
 	// name 입력 받기
-	printf("NAME : ");
+	printf("\n\t\t\tNAME : ");
 	scanf("%s", buff);
 	cmd2 = ft_strjoin(cmd, "'");
 	free(cmd);
@@ -155,7 +198,7 @@ void create_account()
 	cmd = cmd2;
 
 	// age 입력 받기
-	printf("age : ");
+	printf("\n\t\t\tage : ");
 	scanf("%s", buff);
 	cmd2 = ft_strjoin(cmd, buff);
 	free(cmd);
@@ -163,7 +206,7 @@ void create_account()
 	free(cmd2);
 
 	// email 입력 받기
-	printf("EMAIL : ");
+	printf("\n\t\t\tEMAIL : ");
 	scanf("%s", buff);
 	cmd2 = ft_strjoin(cmd, "'");
 	free(cmd);
@@ -175,8 +218,7 @@ void create_account()
 
 	
 	before_cmd(cmd);
-	printf("Create account successfuly\n");
-	// TODO 다시 메뉴로 가는게 좋을 듯
+	printf("\n\n\t\t\tCreate account successfuly\n");
 }
 
 
@@ -196,33 +238,30 @@ void init()
 int main(int argc, char** argv){
 	int choice;
 
-	here:
-	system("clear");
-
-	printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
-	printf("\n\n\t\t\tMINI BANKING MANAGEMENT SYSTEM ");
-	printf("\n\n\t\t\t   [1] login\n\t\t\t   [2] create an new account\n\t\t\t   [3] exit");
-	printf("\n\n\t\t\t   select your option : ");
-	scanf("%d",&choice);
-
-	init();
-	if (choice == 1)
+	while (1)
 	{
-		if (login() == -1)
-			goto here;
-	}
-	else if (choice == 2)
-		create_account();
-	else if (choice == 3)
-		exit(0);
-	else
-	{
+		init();
 		system("clear");
 		printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
-		printf("\n\n\t\t     Please enter the correct option number\n");
-		printf("\n\t\t      You will be redirected in 3 seconds\n");
-		sleep(3);
-		goto here;
+		printf("\n\n\t\t\tMINI BANKING MANAGEMENT SYSTEM ");
+		printf("\n\n\t\t\t   [1] login\n\t\t\t   [2] create an new account\n\t\t\t   [3] exit");
+		printf("\n\n\t\t\t   select your option : ");
+		scanf("%d",&choice);
+
+		if (choice == 1)
+			login(); // 이 부분 while문으로 했을 때 문제 없는지 확인 필요함
+		else if (choice == 2)
+			create_account();
+		else if (choice == 3)
+			exit(0);
+		else
+		{
+			system("clear");
+			printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
+			printf("\n\n\t\t     Please enter the correct option number\n");
+			printf("\n\t\t      You will be redirected in 3 seconds\n");
+			sleep(3);
+		}
 	}
 	return (0);
 }
