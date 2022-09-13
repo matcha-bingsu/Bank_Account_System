@@ -2,7 +2,7 @@
 MYSQL_RES	*result;
 MYSQL_ROW	row;
 
-//거래내역
+// 이체
 void	transfer(int user_num)
 {
 	MYSQL_ROW	from_row;
@@ -10,6 +10,8 @@ void	transfer(int user_num)
 	char		send_acc[BUFF_SIZE];
 	char		cmd[BUFF_SIZE];
 	int			send_money;
+	int			from_total_money; // 보내는 사람 최종 돈
+	int			to_total_money; // 받는 사람 최종 돈
 
 	//사용자 정보 가져오기
 	ft_memset(cmd, 0, 1024);
@@ -81,22 +83,50 @@ void	transfer(int user_num)
 
 	ft_printf("\033[0;34m%s\033[0m\n", row[3]);
 	ft_printf("\n\n\t\t\t🟩SENDING %d\n", send_money);
-	ft_printf("\n\n\t\t\t🟩REMAIN BALANCE : %d\n", ft_atoi(from_row[1]) - send_money);
+	from_total_money = ft_atoi(from_row[1]) - send_money;
+	ft_printf("\n\n\t\t\t🟩REMAIN BALANCE : %d\n", from_total_money);
 	sleep(3);
 
 	//정리
 	ft_memset(cmd, 0, 1024);
 	ft_strcat(cmd, "UPDATE Account set balance = ");
-	ft_strcat(cmd, ft_itoa(ft_atoi(from_row[1]) - send_money));
+	ft_strcat(cmd, ft_itoa(from_total_money));
 	ft_strcat(cmd, " where user_num = ");
 	ft_strcat(cmd, ft_itoa(user_num));
 	before_cmd(cmd);
 
 	ft_memset(cmd, 0, 1024);
 	ft_strcat(cmd, "UPDATE Account set balance = ");
-	ft_strcat(cmd, ft_itoa(ft_atoi(to_row[1]) + send_money));
+	to_total_money = ft_atoi(to_row[1]) + send_money;
+	ft_strcat(cmd, ft_itoa(to_total_money));
 	ft_strcat(cmd, " where user_num = ");
 	ft_strcat(cmd, to_row[4]);
+	before_cmd(cmd);
+
+	// 보내는 사람 거래 내역 추가
+	ft_memset(cmd, 0, 1024);
+	ft_strcat(cmd, "INSERT INTO Transaction (type, amount, balance, client, account_num) VALUES ('withdraw', ");
+	ft_strcat(cmd, ft_itoa(send_money));
+	ft_strcat(cmd, ", ");
+	ft_strcat(cmd, ft_itoa(from_total_money));
+	ft_strcat(cmd, ", '");
+	ft_strcat(cmd, to_row[0]);	// client
+	ft_strcat(cmd, "', '");
+	ft_strcat(cmd, from_row[0]);	// account_num
+	ft_strcat(cmd, "')");
+	before_cmd(cmd);
+
+	// 받는사람 사람 거래 내역 추가
+	ft_memset(cmd, 0, 1024);
+	ft_strcat(cmd, "INSERT INTO Transaction (type, amount, balance, client, account_num) VALUES ('deposit', ");
+	ft_strcat(cmd, ft_itoa(send_money));
+	ft_strcat(cmd, ", ");
+	ft_strcat(cmd, ft_itoa(to_total_money));
+	ft_strcat(cmd, ", '");
+	ft_strcat(cmd, from_row[0]);	// client
+	ft_strcat(cmd, "', '");
+	ft_strcat(cmd, to_row[0]);	// account_num
+	ft_strcat(cmd, "')");
 	before_cmd(cmd);
 }
 
