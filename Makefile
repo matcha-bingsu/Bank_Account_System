@@ -19,9 +19,6 @@ SRC = $(SRC_DIR)/main.c\
 OBJ = $(SRC:.c=.o)
 
 
-
-
-
 all : $(NAME)
 
 

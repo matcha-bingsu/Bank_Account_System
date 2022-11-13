@@ -29,12 +29,13 @@ void	login()
 	here:
 
 	//화면 및 아이디 비밀번호 입력
-    system("clear");
-    printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
-    printf("\n\n\t\t\tID : ");
-    scanf("%s", id);
-    printf("\n\t\t\tPASSWORD : ");
-    scanf("%s", pswd);
+	
+	system("clear");
+	ft_printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
+	ft_printf("\n\n\t\t\tID : ");
+	scanf("%s", id);
+	ft_printf("\n\t\t\tPASSWORD : ");
+	scanf("%s", pswd);
 
 	// 해당 id가 있는지 검색하고 없으면 종료
 	cmd = ft_strjoin("SELECT * from User where ID = '", id);
@@ -60,7 +61,7 @@ void	login()
 	tmprow = mysql_fetch_row(result);
 	if (strcmp(tmprow[2], pswd) != 0)
 	{
-		printf("\n\n\t\t\tPassword is not matched. Please enter right password\n");
+		ft_printf("\n\n\t\t\tPassword is not matched. Please enter right password\n");
 		sleep(2);
 		goto here;
 	}
@@ -242,9 +243,9 @@ void create_account()
 void init()
 {
 	char 		DB_HOST[] = "localhost";
-	char 		DB_USER[] = "root";
-	char 		DB_PASS[] = "jehmno316";
-	char 		DB_NAME[] = "bank";
+	char 		DB_USER[] = "root";			// MYSQL ID
+	char 		DB_PASS[] = "jehmno316";	// MYSQL PWD
+	char 		DB_NAME[] = "bank";			// DB_NAME
 
 	mysql_init(&connection);
 	conn = mysql_real_connect(&connection, DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306, (char *)NULL, 0);
@@ -257,10 +258,21 @@ int main(int argc, char** argv){
 	{
 		init();
 		system("clear");
-		printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
-		printf("\n\n\t\t\tMINI BANKING MANAGEMENT SYSTEM ");
-		printf("\n\n\t\t\t   [1] login\n\t\t\t   [2] create an new account\n\t\t\t   [3] exit");
-		printf("\n\n\t\t\t   select your option : ");
+		ft_printf("\
+		##      ## ######## ##        ######   #######  ##     ## ########\n\
+		##  ##  ## ##       ##       ##    ## ##     ## ###   ### ##\n\
+		##  ##  ## ##       ##       ##       ##     ## #### #### ##\n\
+		##  ##  ## ######   ##       ##       ##     ## ## ### ## ######\n\
+		##  ##  ## ##       ##       ##       ##     ## ##     ## ##\n\
+		##  ##  ## ##       ##       ##    ## ##     ## ##     ## ##\n\
+		 ###  ###  ######## ########  ######   #######  ##     ## ########\n");
+		sleep(3);
+		system("clear");
+		
+		ft_printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
+		ft_printf("\n\n\t\t\tMINI BANKING MANAGEMENT SYSTEM ");
+		ft_printf("\n\n\t\t\t   [1] login\n\t\t\t   [2] create an new account\n\t\t\t   [3] exit");
+		ft_printf("\n\n\t\t\t   select your option : ");
 		scanf("%d",&choice);
 
 		if (choice == 1)
@@ -272,9 +284,9 @@ int main(int argc, char** argv){
 		else
 		{
 			system("clear");
-			printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
-			printf("\n\n\t\t     Please enter the correct option number\n");
-			printf("\n\t\t      You will be redirected in 3 seconds\n");
+			ft_printf("\n\n\t\t\t🟩🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🟩");
+			ft_printf("\n\n\t\t     Please enter the correct option number\n");
+			ft_printf("\n\t\t      You will be redirected in 3 seconds\n");
 			sleep(3);
 		}
 	}
