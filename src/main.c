@@ -160,7 +160,7 @@ void user_page(int user_num)
 
 void create_account()
 {
-	char		buff[20];
+	char		buff[30];
 	char		*cmd;
 	char		*cmd2;
 	char		*id;
