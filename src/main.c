@@ -244,7 +244,7 @@ void init()
 {
 	char 		DB_HOST[] = "localhost";
 	char 		DB_USER[] = "root";			// MYSQL ID
-	char 		DB_PASS[] = "jehmno316";	// MYSQL PWD
+	char 		DB_PASS[] = "";				// MYSQL PWD
 	char 		DB_NAME[] = "bank";			// DB_NAME
 
 	mysql_init(&connection);
